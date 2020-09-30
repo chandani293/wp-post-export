@@ -113,22 +113,8 @@ class Wp_Post_Export_Admin {
         $post_data = get_posts($arg_post); // Get default post data
 		
         if ($post_data) {
-			
-			$filename =  plugin_dir_url( __FILE__ ).'post-data.csv';
-			
-			$csv_filename = $filename."_".date("Y-m-d_H-i",time()).".csv";
-			
-			$file = fopen('php://output', 'w' );
-			fprintf( $file, chr( 0xEF ) . chr( 0xBB ) . chr( 0xBF ) );
-			
-			header( 'Cache-Control: must-revalidate, post-check=0, pre-check=0' );
-			header( 'Content-Description: File Transfer' );
-			header( 'Content-type: text/csv' );
-			header( "Content-Disposition: attachment; filename=".$filename );
-			header( 'Expires: 0' );
-			header( 'Pragma: public' );
-			
-            fputcsv($file, array('Post ID','Post Title','Post Content','Post Excerpt','Post Status', 'URL', 'Categories', 'Tags','Author','Featured Image Url','Published Date'));
+			$posts_data_arr = '';
+            $posts_data_key = array('Post ID','Post Title','Post Content','Post Excerpt','Post Status', 'URL', 'Categories', 'Tags','Author','Featured Image Url','Published Date');
            
             foreach ($post_data as $post) {
                 setup_postdata($post);
@@ -157,12 +143,30 @@ class Wp_Post_Export_Admin {
 					$imgsrc = wp_get_attachment_image_src( get_post_thumbnail_id(get_the_id()), 'thumbnail_size' );
 					$featured_img_src[] = $imgsrc[0];
 				}
-			     
-                fputcsv($file, array(get_the_ID(),get_the_title(),get_the_content(),get_the_excerpt(),get_post_status(),get_the_permalink(), implode(",", $cats), implode(",", $tags),get_the_author(),implode(",", $featured_img_src),get_the_date()));
+			    $posts_data_value []= array(get_the_ID(),get_the_title(),get_the_content(),get_the_excerpt(),get_post_status(),get_the_permalink(), implode(",", $cats), implode(",", $tags),get_the_author(),implode(",", $featured_img_src),get_the_date());
             }
-			fclose( $file );
 			
-			wp_die();
+			//return Key and Value for Post data
+			return $this->outputdata( $posts_data_key,$posts_data_value );
+			
 			}
+		}
+		
+		public function outputdata($data_key,$data_value ) {
+		
+			if ( !empty( $data_value ) ):
+				$fp = fopen( 'php://output', 'w' );
+				
+				fputcsv( $fp,$data_key); // Put file in Key 
+				
+				foreach ( $data_value AS $values ): // Put file in Value 
+					fputcsv( $fp, $values );
+				endforeach;
+
+				fclose( $fp );
+				
+			endif;
+
+			wp_die();
 		}
 }

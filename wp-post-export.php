@@ -5,8 +5,8 @@
  * @since             1.0.0
  * @package           Wp_Post_Export
  * Plugin Name:       WP Post Export
- * Plugin URI:        https://www.cmsminds.com/
- * Description:       This is a short description of what the plugin does. It's displayed in the WordPress admin area.
+ * Plugin URI:        https://github.com/chandani293/wp-post-export
+ * Description:       This Plugin Used for is Export Post Data in CSV file download csv.
  * Version:           1.0.0
  * Author:            Chandani Vadaria
  * Author URI:        https://www.cmsminds.com/
